@@ -1,11 +1,11 @@
 sudo: false
 language: ruby
-rvm: 2.3.0
+rvm: 2.4.1
 bundler_args: "--without='vagrant'"
 before_install:
 - gem update --system
 - gem --version
-- gem install bundler --version 1.11.2
+- gem install bundler --version 1.14.6
 - openssl aes-256-cbc -K $encrypted_d8b89d758c52_key -iv $encrypted_d8b89d758c52_iv
   -in .travis/sensu-omnibus-artifact-builder.pem.enc -out .travis/sensu-omnibus-artifact-builder.pem
   -d
