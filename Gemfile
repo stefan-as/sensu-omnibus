@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'rake'
 
 # Install omnibus
-gem 'omnibus', :git => 'https://github.com/sensu/omnibus.git', :branch => 'sensu'
+gem 'omnibus', :git => 'https://github.com/sensu/omnibus.git', :branch => 'exclude-fs-dirs'
 gem 'ffi-yajl', '2.3.0'
 gem 'artifactory', '2.5.1'
 
