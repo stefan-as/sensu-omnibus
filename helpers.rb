@@ -68,7 +68,7 @@ module Helpers
       "\"#{service_manager}\" on platform \"#{platform_family}\""
     case service_manager
     when :systemd
-      "/etc/systemd/system"
+      "/usr/lib/systemd/system"
     when :sysvinit
       case platform_family
       when "debian"
