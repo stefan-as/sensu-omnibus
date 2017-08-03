@@ -1,5 +1,6 @@
 [Unit]
 Description=sensu <%= service_shortname %>
+After=network-online.target
 
 [Service]
 User=sensu
@@ -10,4 +11,4 @@ Restart=on-failure
 RestartSec=1min
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=network-online.target
