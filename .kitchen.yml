@@ -92,6 +92,7 @@ platforms:
       image_id: ami-52c7df2b
       block_device_mappings:
         - device_name: /dev/sda1
+          ebs:
   - name: debian-8
     run_list: apt::default
     driver:
