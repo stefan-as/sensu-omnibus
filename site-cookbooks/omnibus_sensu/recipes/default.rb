@@ -200,7 +200,7 @@ case node["platform"]
 when "debian"
   # replace omnibus-toolchain tar with system tar as dpkg-deb requires --clamp-mtime now
   if Gem::Version.new(node["platform_version"]) >= Gem::Version.new(9)
-    embedded_tar_path "/opt/omnibus-toolchain/embedded/bin/tar"
+    embedded_tar_path = "/opt/omnibus-toolchain/embedded/bin/tar"
 
     file embedded_tar_path do
       action :delete
