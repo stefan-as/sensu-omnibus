@@ -11,9 +11,6 @@ provisioner:
   require_chef_omnibus: 12.19.36
 
 platforms:
-  - name: macos-10.9
-    driver:
-      box: sensu/macos-10.9
   - name: macos-10.10
     driver:
       box: sensu/macos-10.10

@@ -6,9 +6,9 @@ dependency "ruby-windows-devkit" if windows?
 
 source git: "https://github.com/eventmachine/eventmachine.git"
 
-default_version "v1.2.2"
+default_version "v1.2.5"
 
-version "v1.2.2" do
+version "v1.2.5" do
   source git: "https://github.com/eventmachine/eventmachine.git"
 end
 
@@ -48,5 +48,5 @@ build do
     compile_options << " --with-opt-lib=#{windows_install_prefix}\\bin"
   end
 
-  command "gem install --no-document pkg/eventmachine-1.2.2.gem -- #{compile_options}", env: env
+  command "gem install --no-document pkg/eventmachine-1.2.5.gem -- #{compile_options}", env: env
 end

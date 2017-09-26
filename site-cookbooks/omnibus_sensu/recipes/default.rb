@@ -108,7 +108,7 @@ rev = node["omnibus_sensu"]["project_revision"]
 
 case rev
 when 'archive'
-  directory project_dir do 
+  directory project_dir do
     user node["omnibus"]["build_user"] unless windows?
     group node["omnibus"]["build_user_group"] unless windows?
     recursive true
@@ -125,7 +125,7 @@ when 'archive'
 
   chef_gem 'rubyzip'
 
-  ruby_block 'expand_archive' do 
+  ruby_block 'expand_archive' do
     block do
       require 'zip'
 
@@ -194,6 +194,22 @@ execute "populate_omnibus_cache_s3" do
   user "root" unless windows?
   environment shared_env
   not_if { node["omnibus_sensu"]["publishers"]["s3"].any? {|k,v| v.nil? } }
+end
+
+case node["platform"]
+when "debian"
+  # replace omnibus-toolchain tar with system tar as dpkg-deb requires --clamp-mtime now
+  if Gem::Version.new(node["platform_version"]) >= Gem::Version.new(9)
+    embedded_tar_path = "/opt/omnibus-toolchain/embedded/bin/tar"
+
+    file embedded_tar_path do
+      action :delete
+    end
+
+    link embedded_tar_path do
+      to "/bin/tar"
+    end
+  end
 end
 
 omnibus_build "sensu" do
