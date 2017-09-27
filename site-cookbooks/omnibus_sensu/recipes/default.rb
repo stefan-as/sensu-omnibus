@@ -7,6 +7,12 @@
 include_recipe 'chef-sugar'
 
 if windows?
+  msys2_filename = 'msys2-base-x86_64-20160205.tar.xz'
+  remote_file "#{ENV['SYSTEMDRIVE']}\\msys2\\.cache\\#{msys2_filename}" do
+    source "https://s3-us-west-2.amazonaws.com/sensu-omnibus-cache/#{msys2_filename}"
+    action :create
+  end
+
   include_recipe 'chocolatey'
 
   chocolatey 'dotnet3.5' do
