@@ -1,4 +1,4 @@
-### AIX 6.x/7.x (powerpc)
+### AIX 7.x (powerpc)
 
 **NOTE: Ensure the date is correctly set before following any of the AIX guides.**
 
@@ -100,7 +100,7 @@ website and click `Save image`.
 1. Remove any gcc packages that may cause issues later on:
 
   ```sh
-  rpm -e libstdc++ libstdc++-devel libgcc gcc-c++ gcc gcc-locale
+  rpm -e libstdc++ libstdc++-devel libgcc gcc-c++ gcc gcc-locale gmp mpfr libmpc gcc-cpp
   ```
 
 2. Remove `pkg-config` because it interferes with the Ruby build:
@@ -163,6 +163,7 @@ website and click `Save image`.
 10. Install a newer version of `wget`:
 
   ```sh
+  cd /
   wget http://ftp.gnu.org/gnu/wget/wget-1.15.tar.gz
   gtar xzf wget-1.15.tar.gz
   cd wget-1.15
@@ -191,6 +192,7 @@ website and click `Save image`.
 12. Install the default cacert bundle:
 
   ```sh
+  mkdir -p /usr/local/ssl/certs
   wget --no-check-certificate -O /usr/local/ssl/certs/cacert.pem http://curl.haxx.se/ca/cacert.pem
   wget --no-check-certificate -O /var/ssl/cert.pem http://curl.haxx.se/ca/cacert.pem
   ```
@@ -211,8 +213,8 @@ website and click `Save image`.
 
   ```sh
   rpm -i ftp://ftp.software.ibm.com/aix/freeSoftware/aixtoolbox/RPMS/ppc/sed/sed-4.1.1-1.aix5.1.ppc.rpm
-  rpm -U ftp://ftp.software.ibm.com/aix/freeSoftware/aixtoolbox/RPMS/ppc/expat/expat-2.0.1-2.aix5.3.ppc.rpm
-  rpm -U ftp://ftp.software.ibm.com/aix/freeSoftware/aixtoolbox/RPMS/ppc/expat/expat-devel-2.0.1-2.aix5.3.ppc.rpm
+  rpm -U ftp://ftp.software.ibm.com/aix/freeSoftware/aixtoolbox/RPMS/ppc/expat/expat-2.2.0-1.aix6.1.ppc.rpm
+  rpm -U ftp://ftp.software.ibm.com/aix/freeSoftware/aixtoolbox/RPMS/ppc/expat/expat-devel-2.2.0-1.aix6.1.ppc.rpm
   ```
 
 15. Install `m4` and `autoconf`:
@@ -236,7 +238,7 @@ website and click `Save image`.
   gmake
   gmake install
   cd ..
-  git config --global user.email "justin@heavywater.io"
+  git config --global user.email "justin@sensu.io"
   git config --global user.name "Justin Kolberg"
   ```
 
