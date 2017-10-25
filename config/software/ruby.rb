@@ -185,6 +185,8 @@ build do
   if aix?
     # need to patch ruby's configure file so it knows how to find shared libraries
     patch source: "ruby-aix-configure.patch", plevel: 1, env: patch_env
+    # configure no longer seems to work under ksh, use bash instead
+    patch source: "ruby-aix-configure-use-bash.patch", plevel: 1, env: patch_env
     # have ruby use zlib on AIX correctly
     patch source: "ruby_aix_openssl.patch", plevel: 1, env: patch_env
     # AIX has issues with ssl retries, need to patch to have it retry
