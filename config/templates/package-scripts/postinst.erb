@@ -16,7 +16,7 @@ set -e
 
 using_systemd()
 {
-  [ -e "/proc/1/comm" ] && grep -q "^systemd$" /proc/1/comm
+    [ -e "/proc/1/comm" ] && grep -q "^systemd$" /proc/1/comm
 }
 
 PROGNAME=`basename $0`
@@ -62,139 +62,143 @@ SENSU_GROUP=sensu
 
 error_exit()
 {
-  echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
-  exit 1
+    echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+    exit 1
 }
 
 create_sensu_user_aix()
 {
-  # add /usr/bin/false to the list of allowed shells
-  # NOTE: this is all terrible and makes kittens cry.
-  # it should all be replaced by a single, idempotent command
-  set +e
-  /usr/bin/lssec -f /etc/security/login.cfg -s usw -a shells | /usr/bin/grep "/usr/bin/false" > /dev/null
-  RC=$?
-  set -e
-  if [ "${RC}" != "0" ]; then
-    SHVAL=`/usr/bin/lssec -f /etc/security/login.cfg -s usw -a shells | /usr/bin/cut -d '=' -f2`
-    /usr/bin/chsec -f /etc/security/login.cfg -s usw -a shells="${SHVAL},/usr/bin/false"
-  fi
+    # add /usr/bin/false to the list of allowed shells
+    # NOTE: this is all terrible and makes kittens cry.
+    # it should all be replaced by a single, idempotent command
+    set +e
+    /usr/bin/lssec -f /etc/security/login.cfg -s usw -a shells | /usr/bin/grep "/usr/bin/false" > /dev/null
+    RC=$?
+    set -e
+    if [ "${RC}" != "0" ]; then
+	SHVAL=`/usr/bin/lssec -f /etc/security/login.cfg -s usw -a shells | /usr/bin/cut -d '=' -f2`
+	/usr/bin/chsec -f /etc/security/login.cfg -s usw -a shells="${SHVAL},/usr/bin/false"
+    fi
 
-  # create the system user
-  mkuser pgrp="sensu" shell="/usr/bin/false" home="/opt/sensu" sensu
+    # create the system user
+    mkuser pgrp="sensu" shell="/usr/bin/false" home="/opt/sensu" sensu
 }
 
 create_sensu_user_group()
 {
-  # create sensu group
-  set +e
-  <% case platform_family
-  when "mac_os_x" -%>
-  dscl . -list /Groups | grep "^_sensu" > /dev/null
-  <% else -%>
-  grep "^sensu:" /etc/group > /dev/null
-  <% end -%>
-  RC=$?
-  set -e
-  if [ "${RC}" != "0" ]; then
+    # create sensu group
+    set +e
     <% case platform_family
-    when "aix" -%>
-    mkgroup sensu
-    <% when "solaris2" -%>
-    groupadd sensu
-    <% when "freebsd" -%>
-    pw groupadd sensu
-    <% when "debian", "rhel" -%>
-    groupadd -r sensu
-    <% when "mac_os_x" -%>
-    last_used_gid=`dscacheutil -q group | grep gid | tail -n 1 | awk '{ print $2 }'`
-    sensu_gid=`echo "$last_used_gid + 1" | bc`
-    dscl . -create Groups/_sensu
-    dscl . -create Groups/_sensu PrimaryGroupID $sensu_gid
-    <% else raise "Group creation undefined for platform family \"#{platform_family}\"" -%>
+    when "mac_os_x" -%>
+    dscl . -list /Groups | grep "^_sensu" > /dev/null
+    <% when "linux" -%>
+    getent group sensu > /dev/null
+    <% else -%>
+    grep "^sensu:" /etc/group > /dev/null
     <% end -%>
-  fi
+    RC=$?
+    set -e
+    if [ "${RC}" != "0" ]; then
+	<% case platform_family
+	when "aix" -%>
+	mkgroup sensu
+	<% when "solaris2" -%>
+	groupadd sensu
+	<% when "freebsd" -%>
+	pw groupadd sensu
+	<% when "debian", "rhel" -%>
+	groupadd -r sensu
+	<% when "mac_os_x" -%>
+	last_used_gid=`dscacheutil -q group | grep gid | tail -n 1 | awk '{ print $2 }'`
+	sensu_gid=`echo "$last_used_gid + 1" | bc`
+	dscl . -create Groups/_sensu
+	dscl . -create Groups/_sensu PrimaryGroupID $sensu_gid
+	<% else raise "Group creation undefined for platform family \"#{platform_family}\"" -%>
+	<% end -%>
+    fi
 
-  # create sensu user
-  set +e
-  <% case platform_family
-  when "mac_os_x" -%>
-  dscl . -list /Users | grep "^_sensu" > /dev/null
-  <% else -%>
-  grep "^sensu:" /etc/passwd > /dev/null
-  <% end -%>
-  RC=$?
-  set -e
-  if [ "${RC}" != "0" ]; then
+    # create sensu user
+    set +e
     <% case platform_family
-    when "aix" -%>
-    create_sensu_user_aix
-    <% when "solaris2" -%>
-    useradd -d $INSTALLER_DIR -g sensu sensu # user will be disabled by default
-    passwd -N sensu # enable the user with nologin (NL)
-    <% when "freebsd" -%>
-    pw adduser sensu -g sensu -d /nonexistent -s /usr/sbin/nologin -c "Sensu Monitoring Framework"
-    <% when "debian", "rhel" -%>
-    useradd -r -g sensu -d /opt/sensu -s /bin/false -c "Sensu Monitoring Framework" sensu
-    <% when "mac_os_x" -%>
-    sensu_gid=`dscl . -read /Groups/_sensu | awk '($1 == "PrimaryGroupID:") { print $2 }'`
-    dscl . -create /Users/_sensu UniqueID $sensu_gid
-    dscl . -create /Users/_sensu PrimaryGroupID $sensu_gid
-    dscl . -create /Users/_sensu UserShell /usr/bin/false
-    <% else raise "User creation undefined for platform family \"#{platform_family}\"" -%>
+    when "mac_os_x" -%>
+    dscl . -list /Users | grep "^_sensu" > /dev/null
+    <% when "linux" -%>
+    getent passwd sensu > /dev/null
+    <% else -%>
+    grep "^sensu:" /etc/passwd > /dev/null
     <% end -%>
-  fi
+    RC=$?
+    set -e
+    if [ "${RC}" != "0" ]; then
+	<% case platform_family
+	when "aix" -%>
+	create_sensu_user_aix
+	<% when "solaris2" -%>
+	useradd -d $INSTALLER_DIR -g sensu sensu # user will be disabled by default
+	passwd -N sensu # enable the user with nologin (NL)
+	<% when "freebsd" -%>
+	pw adduser sensu -g sensu -d /nonexistent -s /usr/sbin/nologin -c "Sensu Monitoring Framework"
+	<% when "debian", "rhel" -%>
+	useradd -r -g sensu -d /opt/sensu -s /bin/false -c "Sensu Monitoring Framework" sensu
+	<% when "mac_os_x" -%>
+	sensu_gid=`dscl . -read /Groups/_sensu | awk '($1 == "PrimaryGroupID:") { print $2 }'`
+	dscl . -create /Users/_sensu UniqueID $sensu_gid
+	dscl . -create /Users/_sensu PrimaryGroupID $sensu_gid
+	dscl . -create /Users/_sensu UserShell /usr/bin/false
+	<% else raise "User creation undefined for platform family \"#{platform_family}\"" -%>
+	<% end -%>
+    fi
 }
 
 chown_sensu_dirs()
 {
-  set -e
-  # Ensure all files/directories in $INSTALLER_DIR are owned by root.
-  chown -Rh 0:0 $INSTALLER_DIR
-  chown -R $SENSU_USER:$SENSU_GROUP $CONFIG_DIR
-  chown -R $SENSU_USER:$SENSU_GROUP $LOG_DIR
-  chown -R $SENSU_USER:$SENSU_GROUP $PID_DIR
-  chown -R $SENSU_USER:$SENSU_GROUP $TMP_DIR
+    set -e
+    # Ensure all files/directories in $INSTALLER_DIR are owned by root.
+    chown -Rh 0:0 $INSTALLER_DIR
+    chown -R $SENSU_USER:$SENSU_GROUP $CONFIG_DIR
+    chown -R $SENSU_USER:$SENSU_GROUP $LOG_DIR
+    chown -R $SENSU_USER:$SENSU_GROUP $PID_DIR
+    chown -R $SENSU_USER:$SENSU_GROUP $TMP_DIR
 }
 
 create_system_services()
 {
-  <% if platform_family == "aix" -%>
-  set +e
-  rmssys -s sensu-client 2>&1 > /dev/null
-  set -e
-  mkssys -s sensu-client -p "/opt/sensu/bin/sensu-service" -a "start client" -u sensu -S -n 15 -f 9 > /dev/null
-  <% else -%>
-  # this function is a noop on <%= platform_family %>
-  return
-  <% end -%>
+    <% if platform_family == "aix" -%>
+    set +e
+    rmssys -s sensu-client 2>&1 > /dev/null
+    set -e
+    mkssys -s sensu-client -p "/opt/sensu/bin/sensu-service" -a "start client" -u sensu -S -n 15 -f 9 > /dev/null
+    <% else -%>
+    # this function is a noop on <%= platform_family %>
+    return
+    <% end -%>
 }
 
 <% case platform_family
-  when "rhel" -%>
+when "rhel" -%>
 if [ $1 -eq 1 ]; then
-  create_sensu_user_group
+    create_sensu_user_group
 fi
 set +e
 if using_systemd; then
-  systemctl daemon-reload
+    systemctl daemon-reload
 fi
 set -e
 chown_sensu_dirs
 <% when "debian" -%>
 case "$1" in
-  configure)
-    create_sensu_user_group
-    chown_sensu_dirs
-    ;;
+    configure)
+	create_sensu_user_group
+	chown_sensu_dirs
+	;;
 
-  abort-upgrade|abort-remove|abort-deconfigure)
-    ;;
+    abort-upgrade|abort-remove|abort-deconfigure)
+	;;
 
-  *)
-    echo "postinst called with unknown argument \`$1'" >&2
-    exit 1
-    ;;
+    *)
+	echo "postinst called with unknown argument \`$1'" >&2
+	exit 1
+	;;
 esac
 <% else -%>
 create_sensu_user_group
