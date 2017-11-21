@@ -43,10 +43,12 @@ action=$1
 sensu_service=sensu-$2
 forking=$3
 
-ETC_DIR=/etc
-
-if is_freebsd; then
-  ETC_DIR=/usr/local/etc
+if [ "x$ETC_DIR" = "x" ]; then
+    if is_freebsd; then
+	ETC_DIR=/usr/local/etc
+    else
+	ETC_DIR=/etc
+    fi
 fi
 
 INSTALLER_DIR=/opt/sensu
@@ -61,8 +63,20 @@ LOG_DIR=/var/log/sensu
 LOG_LEVEL=info
 USER=sensu
 
+if [ -f $ETC_DIR/sysconfig/sensu ]; then
+    . $ETC_DIR/sysconfig/sensu
+fi
+
+if [ -f $ETC_DIR/sysconfig/$sensu_service ]; then
+    . $ETC_DIR/sysconfig/$sensu_service
+fi
+
 if [ -f $ETC_DIR/default/sensu ]; then
     . $ETC_DIR/default/sensu
+fi
+
+if [ -f $ETC_DIR/default/$sensu_service ]; then
+    . $ETC_DIR/default/$sensu_service
 fi
 
 cd $INSTALLER_DIR
@@ -79,21 +93,21 @@ fi
 
 ensure_dir() {
     if [ ! -d $1 ]; then
-        mkdir -p $1
-        chown -R $2 $1
-        chmod 755 $1
+	mkdir -p $1
+	chown -R $2 $1
+	chmod 755 $1
     fi
 }
 
 set_sensu_paths() {
     if [ "x$EMBEDDED_RUBY" = "xtrue" ]; then
-        PATH=$INSTALLER_DIR/embedded/bin:$PATH:$PLUGINS_DIR:$HANDLERS_DIR
-        GEM_PATH=$INSTALLER_DIR/embedded/lib/ruby/gems/2.4.0:$GEM_PATH
-        export PATH
-        export GEM_PATH
+	PATH=$INSTALLER_DIR/embedded/bin:$PATH:$PLUGINS_DIR:$HANDLERS_DIR
+	GEM_PATH=$INSTALLER_DIR/embedded/lib/ruby/gems/2.4.0:$GEM_PATH
+	export PATH
+	export GEM_PATH
     else
-        PATH=$PATH:$PLUGINS_DIR:$HANDLERS_DIR
-        export PATH
+	PATH=$PATH:$PLUGINS_DIR:$HANDLERS_DIR
+	export PATH
     fi
 }
 
