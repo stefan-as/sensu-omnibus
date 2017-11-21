@@ -12,12 +12,8 @@ end
 dependency "eventmachine"
 
 if windows?
-  case ENV["WINDOWS_TARGET_VERSION"]
-  when "2003","2008","2008r2"
-    dependency "winsw-net2"
-  else
-    dependency "winsw-net4"
-  end
+  dependency "winsw-net2"
+  dependency "winsw-net4"
 end
 
 build do
@@ -179,7 +175,6 @@ build do
   if windows?
     copy("#{files_dir}/sensu-client-windows.xml", "#{bin_dir}/sensu-client.xml")
     copy("#{files_dir}/sensu-client.exe.config", "#{bin_dir}/sensu-client.exe.config")
-    move("#{bin_dir}/winsw.exe", "#{bin_dir}/sensu-client.exe")
   else
     link("#{embedded_bin_dir}/sensu-client", "#{bin_dir}/sensu-client")
     link("#{embedded_bin_dir}/sensu-server", "#{bin_dir}/sensu-server")

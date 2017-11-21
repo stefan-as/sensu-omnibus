@@ -18,6 +18,6 @@ build do
   bin_dir = File.join(install_dir, "bin")
 
   if windows?
-    copy("WinSW.NET4.exe", "#{bin_dir}/winsw.exe")
+    copy("WinSW.NET4.exe", "#{bin_dir}/WinSW.NET4.exe")
   end
 end
