@@ -18,8 +18,9 @@ if [ "$(git describe --tags --exact-match "$OMNIBUS_COMMIT")" ]; then
 
     SENSU_VERSION=$(echo "$TAG" | awk -F'-' '{print $1}' | sed 's/v//g')
     BUILD_NUMBER=$(echo "$TAG" | awk -F'-' '{print $2}')
+    PROJECT_REVISION=$TAG
 
-    export SENSU_VERSION BUILD_NUMBER
+    export SENSU_VERSION BUILD_NUMBER PROJECT_REVISION
 
     echo "======================== Building ${SENSU_VERSION}-${BUILD_NUMBER} on ${BUILD_PLATFORM}"
 

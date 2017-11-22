@@ -170,7 +170,7 @@ suites:
     - omnibus_sensu::default
     attributes:
       omnibus_sensu:
-        project_revision: "<%= ENV['PROJECT_REVISION'] || `git describe --all`.chomp %>"
+        project_revision: "<%= ENV['PROJECT_REVISION'] %>"
         build_version: "<%= build_version %>"
         build_iteration: "<%= build_iteration %>"
         gpg_passphrase: "<%= ENV['GPG_PASSPHRASE'] %>"
