@@ -1,5 +1,9 @@
 <?xml version='1.0'?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+<Wix
+    xmlns="http://schemas.microsoft.com/wix/2006/wi"
+    xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
+    xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension"
+>
 
   <!-- This is how we include wxi files -->
   <?include "parameters.wxi" ?>
@@ -9,7 +13,7 @@
     Name is made of localized product name and version number.
   -->
   <Product Id="*" Name="!(loc.ProductName)" Language="!(loc.LANG)"
-          Version="$(var.VersionNumber)" Manufacturer="!(loc.ManufacturerName)" UpgradeCode="$(var.UpgradeCode)">
+           Version="$(var.VersionNumber)" Manufacturer="!(loc.ManufacturerName)" UpgradeCode="$(var.UpgradeCode)">
 
     <!--
       Minimum installer version (2.0) - Window XP and above.
@@ -17,6 +21,10 @@
     -->
     <Package InstallerVersion="200" InstallPrivileges="elevated"
              Compressed="yes" InstallScope="perMachine" />
+
+    <!-- Include .NET Framework properties -->
+    <PropertyRef Id="NETFRAMEWORK20"/>
+    <PropertyRef Id="WIX_IS_NETFRAMEWORK_40_OR_LATER_INSTALLED"/>
 
     <Media Id="1" Cabinet="Project.cab" EmbedCab="yes" CompressionLevel="high" />
 
@@ -92,6 +100,24 @@
                      Part="last" System="yes"
                      Value="[PROJECTLOCATION]bin;[PROJECTLOCATION]embedded\bin" />
       </Component>
+      <Component Id="SensuServiceWrapperNET4"
+                 Guid="{60098D5D-BBA4-41C6-8F6F-DA600CC4834C}">
+        <Condition>
+          WIX_IS_NETFRAMEWORK_40_OR_LATER_INSTALLED
+        </Condition>
+        <CopyFile Id="CopySensuServiceWrapperNET4"
+                  FileId="fil2730CA0415D63723292B43F1184FB6DC"
+                  DestinationDirectory="dirAACB971AAE53CD846725B5E3EF1FFD5C" DestinationName="sensu-client.exe" />
+      </Component>
+      <Component Id="SensuServiceWrapperNET2"
+                 Guid="{60098D5D-BBA4-41C6-8F6F-DA600DD4834D}">
+        <Condition>
+          NETFRAMEWORK20 AND NOT WIX_IS_NETFRAMEWORK_40_OR_LATER_INSTALLED
+        </Condition>
+        <CopyFile Id="CopySensuServiceWrapperNET2"
+                  FileId="fil21EAF549C118E62490D5F1CA8D307009"
+                  DestinationDirectory="dirAACB971AAE53CD846725B5E3EF1FFD5C" DestinationName="sensu-client.exe" />
+      </Component>
     </DirectoryRef>
 
     <SetDirectory Id="WINDOWSVOLUME" Value="[WindowsVolume]" />
@@ -100,6 +126,8 @@
     <Feature Id="ProjectFeature" Title="!(loc.FeatureMainName)" Absent="disallow" AllowAdvertise="no" Level="1" ConfigurableDirectory="<%= wix_install_dir %>">
       <ComponentGroupRef Id="ProjectDir" />
       <ComponentRef Id="SensuPath" />
+      <ComponentRef Id="SensuServiceWrapperNET4" />
+      <ComponentRef Id="SensuServiceWrapperNET2" />
     </Feature>
 
     <!-- UI Stuff -->

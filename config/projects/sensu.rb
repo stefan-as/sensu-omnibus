@@ -67,6 +67,7 @@ end
 
 package :msi do
   upgrade_code "29B5AA66-46B3-4676-8D67-2F3FB31CC549"
+  wix_candle_extension "WixNetFxExtension"
   wix_light_extension "WixNetFxExtension"
 end
 
