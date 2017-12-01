@@ -104,27 +104,33 @@ than two hours.
   ```sh
   cd sensu-omnibus
   ```
+  
+3. Check out the desired revision of sensu-omnibus, e.g. `release/1.1` branch:
 
-3. Install gem dependencies:
+   ```
+   git checkout release/1.1
+   ```
+
+4. Install gem dependencies:
 
   ```sh
   bundle install
   ```
 
-4. Export version environment variables:
+5. Export version environment variables:
 
   ```sh
   export SENSU_VERSION=x.y.z
   export BUILD_NUMBER=1
   ```
 
-5. Build Sensu:
+6. Build Sensu:
 
   ```sh
   bundle exec omnibus build sensu -l debug
   ```
 
-6. Upload packages:
+7. Upload packages:
 
   ```sh
   export AWS_ACCESS_KEY_ID=replaceme
