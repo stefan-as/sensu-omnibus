@@ -36,6 +36,10 @@
       <![CDATA[Installed OR VersionNT >= 601]]>
     </Condition -->
 
+    <Condition Message="This application requires .NET Framework 2.0 or newer. Please install the .NET Framework then run this installer again.">
+      <![CDATA[Installed OR NETFRAMEWORK20 OR WIX_IS_NETFRAMEWORK_40_OR_LATER_INSTALLED]]>
+    </Condition>
+
     <!-- Major upgrade -->
     <Upgrade Id="$(var.UpgradeCode)">
       <UpgradeVersion OnlyDetect="yes" Minimum="$(var.VersionNumber)" IncludeMinimum="no" Property="NEWERVERSIONDETECTED" />
