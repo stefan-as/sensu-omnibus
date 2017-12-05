@@ -65,10 +65,10 @@ module Helpers
 
   def self.directory_for_service(platform_family, service_manager)
     unknown_combo = "No service directory defined for service manager " +
-      "\"#{service_manager}\" on platform \"#{platform_family}\""
+                    "\"#{service_manager}\" on platform \"#{platform_family}\""
     case service_manager
     when :systemd
-      "/usr/lib/systemd/system"
+      "/lib/systemd/system"
     when :sysvinit
       case platform_family
       when "debian"
