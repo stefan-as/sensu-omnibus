@@ -105,11 +105,11 @@ than two hours.
   cd sensu-omnibus
   ```
   
-3. Check out the desired revision of sensu-omnibus, e.g. `release/1.1` branch:
+3. Check out the desired tag of sensu-omnibus, e.g. `v1.2.0-1` branch:
 
-   ```
-   git checkout release/1.1
-   ```
+  ```sh
+  git checkout v1.2.0-1
+  ```
 
 4. Install gem dependencies:
 

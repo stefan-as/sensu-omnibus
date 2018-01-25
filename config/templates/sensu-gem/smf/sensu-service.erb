@@ -15,7 +15,7 @@
             <service_fmri value="svc:/milestone/multi-user"/>
         </dependency>
         <exec_method timeout_seconds="60" type="method" name="start"
-            exec="/opt/sensu/bin/sensu-service <%= service_shortname %>"/>
+            exec="/opt/sensu/bin/sensu-service start <%= service_shortname %>"/>
         <!--
             The exec attribute below can be changed to a command that SMF
             should execute to stop the service.  See smf_method(5) for more
