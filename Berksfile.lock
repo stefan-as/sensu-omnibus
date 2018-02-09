@@ -2,7 +2,7 @@ DEPENDENCIES
   apt (~> 2.8)
   mingw
     git: https://github.com/sensu/mingw-cookbook.git
-    revision: 61e7bf7ac76bc3682fe0b7db33e2642dd96b4fd9
+    revision: e018959c790d0193ebac6bb6d074c0ef82b7ce16
     ref: sensu
   omnibus
     git: https://github.com/sensu/omnibus-cookbook.git
