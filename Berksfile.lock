@@ -2,7 +2,7 @@ DEPENDENCIES
   apt (~> 2.8)
   mingw
     git: https://github.com/sensu/mingw-cookbook.git
-    revision: 52da430487f19178d064a380c55d5991a4c39b1f
+    revision: 61e7bf7ac76bc3682fe0b7db33e2642dd96b4fd9
     ref: sensu
   omnibus
     git: https://github.com/sensu/omnibus-cookbook.git
@@ -51,7 +51,6 @@ GRAPH
     chocolatey (~> 1.0)
     freebsd (~> 1.0)
     git (~> 5.0)
-    mingw (>= 0.0.0)
     omnibus (~> 5.0)
   remote_install (1.0.2)
   seven_zip (2.0.2)
