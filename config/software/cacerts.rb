@@ -16,16 +16,25 @@
 
 name "cacerts"
 
-default_version "2016.01.20"
+license "MPL-2.0"
+license_file "https://www.mozilla.org/media/MPL/2.0/index.815ca599c9df.txt"
+skip_transitive_dependency_licensing true
+
+default_version "2018-01-17"
+
+source url: "https://curl.haxx.se/ca/cacert-#{version}.pem"
+
+version("2018-01-17") { source sha256: "defe310a0184a12e4b1b3d147f1d77395dd7a09e3428373d019bef5d542ceba3" }
+
+version("2017-06-07") { source sha256: "e78c8ab7b4432bd466e64bb942d988f6c0ac91cd785017e465bdc96d42fe9dd0" }
+
+version("2017-01-18") { source sha256: "e62a07e61e5870effa81b430e1900778943c228bd7da1259dd6a955ee2262b47" }
+
+version("2016-04-20") { source sha256: "2c6d4960579b0d4fd46c6cbf135545116e76f2dbb7490e24cf330f2565770362" }
 
 version "2016.01.20" do
-  source md5: "36eee0e80373937dd90a9a334ae42817"
-  source url: "https://raw.githubusercontent.com/bagder/ca-bundle/dfcc02c918b7bf40ed3a7f27a634c74ef4e80829/ca-bundle.crt"
-end
-
-version "2015.10.28" do
-  source md5: "3c58c3f2435598a942dc37cdb02a3ec3"
-  source url: "https://raw.githubusercontent.com/bagder/ca-bundle/86347ecbdc2277f365d02f0d208b822a214e012d/ca-bundle.crt"
+  source sha256: "674f211b2a5898f2740ea62f3003ce817cdbf5f00325ab3169b7bb9922fc7808"
+  source url: "https://curl.haxx.se/ca/cacert-2016-01-20.pem"
 end
 
 relative_path "cacerts-#{version}"
@@ -33,20 +42,12 @@ relative_path "cacerts-#{version}"
 build do
   mkdir "#{install_dir}/embedded/ssl/certs"
 
-  # Append the 1024bit Verisign certs so that S3 continues to work
-  block do
-    unless File.foreach("#{project_dir}/ca-bundle.crt").grep(/^Verisign Class 3 Public Primary Certification Authority$/).any?
-      File.open("#{project_dir}/ca-bundle.crt", "a") { |fd| fd.write(VERISIGN_CERTS) }
-    end
-  end
-
-  copy "#{project_dir}/ca-bundle.crt", "#{install_dir}/embedded/ssl/certs/cacert.pem"
+  copy "#{project_dir}/cacert*.pem", "#{install_dir}/embedded/ssl/certs/cacert.pem"
+  copy "#{project_dir}/cacert*.pem", "#{install_dir}/embedded/ssl/cert.pem" if windows?
 
   # Windows does not support symlinks
-  if windows?
-    copy "#{project_dir}/ca-bundle.crt", "#{install_dir}/embedded/ssl/cert.pem"
-  else
-    link "#{install_dir}/embedded/ssl/certs/cacert.pem", "#{install_dir}/embedded/ssl/cert.pem"
+  unless windows?
+    link "certs/cacert.pem", "#{install_dir}/embedded/ssl/cert.pem", unchecked: true
 
     block { File.chmod(0644, "#{install_dir}/embedded/ssl/certs/cacert.pem") }
   end
