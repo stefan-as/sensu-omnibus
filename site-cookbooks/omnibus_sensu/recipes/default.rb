@@ -143,6 +143,7 @@ else
   git project_dir do
     repository 'https://github.com/sensu/sensu-omnibus.git'
     revision rev
+    environment ({"PATH" => '/opt/omnibus-toolchain/bin:/opt/omnibus-toolchain/embedded/bin:/usr/local/bin:$PATH'}) unless windows?
     user node["omnibus"]["build_user"] unless windows?
     group node["omnibus"]["build_user_group"] unless windows?
     action :sync
